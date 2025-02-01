@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8">
+    <meta charset="utf-8" />
     <title>MAM Class Events Calendar</title>
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
@@ -17,6 +17,10 @@
         color: white;
         padding: 20px;
         text-align: center;
+      }
+      .header img {
+        max-height: 80px;
+        margin-bottom: 10px;
       }
       .message {
         margin: 20px;
@@ -41,17 +45,14 @@
   </head>
   <body>
     <div class="header">
+      <!-- Yale Logo -->
+      <img src="https://upload.wikimedia.org/wikipedia/en/thumb/2/2f/Yale_University_logo.svg/200px-Yale_University_logo.svg.png" alt="Yale Logo">
       <h1>MAM Class Upcoming Events</h1>
     </div>
     <div class="container">
       <div class="message">
         <p>Hello MAM classmates!</p>
-        <p>
-          I’m thrilled to share with you all the exciting events we have lined up for the rest of the year. 
-          A huge thank you to <strong>Jeff, Shanika, Shivanjan, and Jaryd</strong> for their incredible help in coordinating these events.
-          I am truly excited for the semester to come and can’t wait to make the most out of the rest of our time together!
-        </p>
-        <p>Let's have an amazing semester and enjoy every moment!</p>
+        <p>Looking forward to a great year!</p>
       </div>
       <div id="calendar"></div>
     </div>
@@ -80,11 +81,65 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <!-- FullCalendar JS -->
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+    
     <script>
-      // Event data embedded as JSON.
-      var events = [
+      // Function to generate recurring events.
+      function generateRecurringEvents(startDateStr, endDateStr, eventTemplate) {
+        var events = [];
+        var startDate = new Date(startDateStr);
+        var endDate = new Date(endDateStr);
+        var current = new Date(startDate);
+        while (current <= endDate) {
+          var eventStart = new Date(current);
+          eventStart.setHours(eventTemplate.startHour, eventTemplate.startMinute, 0, 0);
+          var eventEnd = new Date(current);
+          eventEnd.setHours(eventTemplate.endHour, eventTemplate.endMinute, 0, 0);
+          events.push({
+            title: eventTemplate.title,
+            start: eventStart.toISOString().slice(0,19),
+            end: eventEnd.toISOString().slice(0,19),
+            description: eventTemplate.description,
+            location: eventTemplate.location
+          });
+          current.setDate(current.getDate() + 7); // next week
+        }
+        return events;
+      }
+      
+      // Define recurring event templates.
+      var libraryLeapersTemplate = {
+        title: "Library Leapers",
+        description: "Explore a different Yale Library every week!",
+        location: "Yale Library",
+        startHour: 19, startMinute: 30,
+        endHour: 23, endMinute: 0
+      };
+      var unplugTemplate = {
+        title: "Unplug Event",
+        description: "Time to disconnect and relax.",
+        location: "Campus Lounge",
+        startHour: 18, startMinute: 0,
+        endHour: 20, endMinute: 0
+      };
+      var eastRockHikeTemplate = {
+        title: "East Rock Sunset Hike",
+        description: "Enjoy a scenic sunset hike at East Rock.",
+        location: "East Rock Trail",
+        startHour: 17, startMinute: 0,
+        endHour: 19, endMinute: 0
+      };
+
+      // Generate recurring events.
+      // Library Leapers: every Tuesday from Feb 4, 2025 until April 29, 2025.
+      var libraryLeapersEvents = generateRecurringEvents("2025-02-04", "2025-04-29", libraryLeapersTemplate);
+      // Unplug Event: every Monday from Feb 3, 2025 until May 05, 2025.
+      var unplugEvents = generateRecurringEvents("2025-02-03", "2025-05-05", unplugTemplate);
+      // East Rock Sunset Hike: every Sunday from Feb 9, 2025 until May 04, 2025.
+      var eastRockHikeEvents = generateRecurringEvents("2025-02-09", "2025-05-04", eastRockHikeTemplate);
+      
+      // One-time events.
+      var oneTimeEvents = [
         {
-          id: 1,
           title: "Welcome Back! East Rock Brewery Bash",
           start: "2025-01-28T18:30:00",
           end: "2025-01-28T20:30:00",
@@ -92,23 +147,6 @@
           location: "East Rock Brewery"
         },
         {
-          id: 2,
-          title: "Press Start to Unwind: MAM-FAM Barcade Banter",
-          start: "2025-02-03T19:30:00",
-          end: "2025-02-03T23:59:00",
-          description: "Relax and have fun at our weekly barcade event.",
-          location: "Campus Barcade"
-        },
-        {
-          id: 3,
-          title: "Library Leapers",
-          start: "2025-02-04T19:30:00",
-          end: "2025-02-04T23:00:00",
-          description: "Explore a different Yale Library every week!",
-          location: "Yale Library"
-        },
-        {
-          id: 4,
           title: "Trip to Louis' Lunch",
           start: "2025-02-04T18:00:00",
           end: "2025-02-04T19:00:00",
@@ -116,31 +154,58 @@
           location: "Louis' Lunch"
         },
         {
-          id: 5,
           title: "Valentine's Day Sip & Paint Mixer",
           start: "2025-02-14T18:00:00",
           end: "2025-02-14T21:00:00",
-          description: "Mix, mingle, and get creative with Yale art professor Mattew Watson.",
+          description: "Mix, mingle, and get creative with Yale art.",
           location: "TBA"
         },
         {
-          id: 6,
-          title: "East Rock Sunset Hike",
-          start: "2025-02-09T17:00:00",
-          end: "2025-02-09T19:00:00",
-          description: "Enjoy a scenic sunset hike at East Rock.",
-          location: "East Rock Trail"
-        },
-        {
-          id: 7,
           title: "Super Bowl Sunday Party",
           start: "2025-02-11T18:00:00",
           end: "2025-02-11T21:00:00",
-          description: "Show off your jersey and have the MAM FAM sign it!",
+          description: "Show off your jersey and have fun!",
           location: "TBA"
         }
       ];
 
+      // Small Group Dinner events (manually scheduled on non-conflicting days).
+      var smallGroupDinners = [
+        {
+          title: "Small Group Dinner - Modern Apizza",
+          start: "2025-02-12T19:30:00",
+          end: "2025-02-12T21:30:00",
+          description: "Dinner at Modern Apizza.",
+          location: "Modern Apizza"
+        },
+        {
+          title: "Small Group Dinner - Frank Pepe Pizzeria",
+          start: "2025-02-20T19:30:00",
+          end: "2025-02-20T21:30:00",
+          description: "Dinner at Frank Pepe Pizzeria.",
+          location: "Frank Pepe Pizzeria"
+        },
+        {
+          title: "Small Group Dinner - Union League Cafe",
+          start: "2025-03-07T19:30:00",
+          end: "2025-03-07T21:30:00",
+          description: "Dinner at Union League Cafe.",
+          location: "Union League Cafe"
+        },
+        {
+          title: "Small Group Dinner - Caseus Fromagerie",
+          start: "2025-03-21T19:30:00",
+          end: "2025-03-21T21:30:00",
+          description: "Dinner at Caseus Fromagerie.",
+          location: "Caseus Fromagerie"
+        }
+      ];
+
+      // Combine all events into one array.
+      var allEvents = [];
+      allEvents = allEvents.concat(oneTimeEvents, libraryLeapersEvents, unplugEvents, eastRockHikeEvents, smallGroupDinners);
+
+      // Initialize FullCalendar with our events.
       document.addEventListener('DOMContentLoaded', function() {
         var calendarEl = document.getElementById('calendar');
         var calendar = new FullCalendar.Calendar(calendarEl, {
@@ -150,7 +215,7 @@
             center: 'title',
             right: 'dayGridMonth,timeGridWeek,timeGridDay'
           },
-          events: events,
+          events: allEvents,
           eventClick: function(info) {
             // Format start and end dates/times.
             var start = info.event.start;
