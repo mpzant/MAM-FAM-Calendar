@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>MAM Class Events Calendar</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- FullCalendar CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet" />
+    <style>
+      body {
+        background-color: #f8f9fa;
+        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      }
+      .header {
+        background-color: #0E2244; /* Yale Blue */
+        color: white;
+        padding: 20px;
+        text-align: center;
+      }
+      .message {
+        margin: 20px;
+        font-size: 1.2em;
+      }
+      #calendar {
+        max-width: 900px;
+        margin: 40px auto;
+      }
+      .fc-toolbar-title {
+        font-size: 1.5em;
+        color: #0E2244;
+      }
+      .fc-button {
+        background-color: #FFA500; /* Orange accent */
+        border: none;
+      }
+      .fc-button:hover {
+        background-color: #e59400;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <h1>MAM Class Upcoming Events</h1>
+    </div>
+    <div class="container">
+      <div class="message">
+        <p>Hello MAM classmates!</p>
+        <p>
+          I’m thrilled to share with you all the exciting events we have lined up for the rest of the year. 
+          A huge thank you to <strong>Jeff, Shanika, Shivanjan, and Jaryd</strong> for their incredible help in coordinating these events.
+          I am truly excited for the semester to come and can’t wait to make the most out of the rest of our time together!
+        </p>
+        <p>Let's have an amazing semester and enjoy every moment!</p>
+      </div>
+      <div id="calendar"></div>
+    </div>
+
+    <!-- Modal for Event Details -->
+    <div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="eventModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalTitle"></h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body" id="modalBody"></div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- jQuery, Popper.js, and Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- FullCalendar JS -->
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+    <script>
+      // Event data embedded as JSON.
+      var events = [
+        {
+          id: 1,
+          title: "Welcome Back! East Rock Brewery Bash",
+          start: "2025-01-28T18:30:00",
+          end: "2025-01-28T20:30:00",
+          description: "Kick off the semester with a bash at East Rock Brewery!",
+          location: "East Rock Brewery"
+        },
+        {
+          id: 2,
+          title: "Press Start to Unwind: MAM-FAM Barcade Banter",
+          start: "2025-02-03T19:30:00",
+          end: "2025-02-03T23:59:00",
+          description: "Relax and have fun at our weekly barcade event.",
+          location: "Campus Barcade"
+        },
+        {
+          id: 3,
+          title: "Library Leapers",
+          start: "2025-02-04T19:30:00",
+          end: "2025-02-04T23:00:00",
+          description: "Explore a different Yale Library every week!",
+          location: "Yale Library"
+        },
+        {
+          id: 4,
+          title: "Trip to Louis' Lunch",
+          start: "2025-02-04T18:00:00",
+          end: "2025-02-04T19:00:00",
+          description: "A classic visit to the historic Louis' Lunch.",
+          location: "Louis' Lunch"
+        },
+        {
+          id: 5,
+          title: "Valentine's Day Sip & Paint Mixer",
+          start: "2025-02-14T18:00:00",
+          end: "2025-02-14T21:00:00",
+          description: "Mix, mingle, and get creative with Yale art professor Mattew Watson.",
+          location: "TBA"
+        },
+        {
+          id: 6,
+          title: "East Rock Sunset Hike",
+          start: "2025-02-09T17:00:00",
+          end: "2025-02-09T19:00:00",
+          description: "Enjoy a scenic sunset hike at East Rock.",
+          location: "East Rock Trail"
+        },
+        {
+          id: 7,
+          title: "Super Bowl Sunday Party",
+          start: "2025-02-11T18:00:00",
+          end: "2025-02-11T21:00:00",
+          description: "Show off your jersey and have the MAM FAM sign it!",
+          location: "TBA"
+        }
+      ];
+
+      document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+          initialView: 'dayGridMonth',
+          headerToolbar: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth,timeGridWeek,timeGridDay'
+          },
+          events: events,
+          eventClick: function(info) {
+            // Format start and end dates/times.
+            var start = info.event.start;
+            var end = info.event.end;
+            var options = { 
+              weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', 
+              hour: '2-digit', minute: '2-digit' 
+            };
+            var startStr = start ? start.toLocaleString('en-US', options) : '';
+            var endStr = end ? end.toLocaleString('en-US', options) : '';
+            var eventDetails = '<p><strong>When:</strong> ' + startStr;
+            if (endStr) {
+              eventDetails += ' - ' + endStr;
+            }
+            eventDetails += '</p>';
+            eventDetails += '<p><strong>Where:</strong> ' + (info.event.extendedProps.location || 'TBA') + '</p>';
+            eventDetails += '<p><strong>Description:</strong> ' + (info.event.extendedProps.description || 'No additional details') + '</p>';
+            document.getElementById('modalTitle').innerText = info.event.title;
+            document.getElementById('modalBody').innerHTML = eventDetails;
+            $('#eventModal').modal('show');
+          }
+        });
+        calendar.render();
+      });
+    </script>
+  </body>
+</html>
