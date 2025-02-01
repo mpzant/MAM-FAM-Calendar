@@ -18,9 +18,8 @@
         padding: 20px;
         text-align: center;
       }
-      .header img {
-        max-height: 80px;
-        margin-bottom: 10px;
+      .header h1 {
+        margin: 0;
       }
       .message {
         margin: 20px;
@@ -45,9 +44,8 @@
   </head>
   <body>
     <div class="header">
-      <!-- Yale Logo -->
-      <img src="https://upload.wikimedia.org/wikipedia/en/thumb/2/2f/Yale_University_logo.svg/200px-Yale_University_logo.svg.png" alt="Yale Logo">
       <h1>MAM Class Upcoming Events</h1>
+      <p>Looking forward to a great year!</p>
     </div>
     <div class="container">
       <div class="message">
@@ -83,7 +81,7 @@
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
     
     <script>
-      // Function to generate recurring events.
+      // Helper function to generate recurring events.
       function generateRecurringEvents(startDateStr, endDateStr, eventTemplate) {
         var events = [];
         var startDate = new Date(startDateStr);
@@ -106,14 +104,17 @@
         return events;
       }
       
-      // Define recurring event templates.
+      // Recurring event templates.
+      
+      // Library Leapers: Wednesday nights from 7:30 PM to midnight.
       var libraryLeapersTemplate = {
         title: "Library Leapers",
         description: "Explore a different Yale Library every week!",
         location: "Yale Library",
         startHour: 19, startMinute: 30,
-        endHour: 23, endMinute: 0
+        endHour: 24, endMinute: 0  // 24:00 will roll over to midnight
       };
+      // Unplug Event: Mondays only.
       var unplugTemplate = {
         title: "Unplug Event",
         description: "Time to disconnect and relax.",
@@ -121,6 +122,7 @@
         startHour: 18, startMinute: 0,
         endHour: 20, endMinute: 0
       };
+      // East Rock Hike: Sundays at 5:00 PM.
       var eastRockHikeTemplate = {
         title: "East Rock Sunset Hike",
         description: "Enjoy a scenic sunset hike at East Rock.",
@@ -128,13 +130,13 @@
         startHour: 17, startMinute: 0,
         endHour: 19, endMinute: 0
       };
-
+      
       // Generate recurring events.
-      // Library Leapers: every Tuesday from Feb 4, 2025 until April 29, 2025.
-      var libraryLeapersEvents = generateRecurringEvents("2025-02-04", "2025-04-29", libraryLeapersTemplate);
-      // Unplug Event: every Monday from Feb 3, 2025 until May 05, 2025.
+      // Library Leapers: Every Wednesday from Feb 5, 2025 to May 7, 2025.
+      var libraryLeapersEvents = generateRecurringEvents("2025-02-05", "2025-05-07", libraryLeapersTemplate);
+      // Unplug Event: Every Monday from Feb 3, 2025 to May 05, 2025.
       var unplugEvents = generateRecurringEvents("2025-02-03", "2025-05-05", unplugTemplate);
-      // East Rock Sunset Hike: every Sunday from Feb 9, 2025 until May 04, 2025.
+      // East Rock Hike: Every Sunday from Feb 9, 2025 to May 04, 2025.
       var eastRockHikeEvents = generateRecurringEvents("2025-02-09", "2025-05-04", eastRockHikeTemplate);
       
       // One-time events.
@@ -154,22 +156,43 @@
           location: "Louis' Lunch"
         },
         {
-          title: "Valentine's Day Sip & Paint Mixer",
-          start: "2025-02-14T18:00:00",
+          title: "Valentine's Day Sip & Paint Mixer (Red Cohort)",
+          start: "2025-02-14T18:30:00",
           end: "2025-02-14T21:00:00",
-          description: "Mix, mingle, and get creative with Yale art.",
+          description: "Mix, mingle, and get creative with a sip & paint mixer.",
           location: "TBA"
         },
         {
           title: "Super Bowl Sunday Party",
-          start: "2025-02-11T18:00:00",
-          end: "2025-02-11T21:00:00",
-          description: "Show off your jersey and have fun!",
+          start: "2025-02-09T19:00:00",
+          end: "2025-02-09T22:00:00",
+          description: "Join us for a Super Bowl celebration!",
+          location: "TBA"
+        },
+        {
+          title: "Rock Climbing Day at Ascent Rock Climbing Gym",
+          start: "2025-03-15T12:00:00",
+          end: "2025-03-15T15:00:00",
+          description: "An indoor rock climbing adventure.",
+          location: "Ascent Rock Climbing Gym"
+        },
+        {
+          title: "Brazilian Jiu Jitsu Self-Defense Class",
+          start: "2025-04-10T17:00:00",
+          end: "2025-04-10T18:30:00",
+          description: "Learn self-defense techniques at Ronin BJJ.",
+          location: "Ronin BJJ"
+        },
+        {
+          title: "Polar Plunge Fundraiser",
+          start: "2025-02-28T12:00:00",
+          end: "2025-02-28T13:00:00",
+          description: "A chilly dip for a good cause!",
           location: "TBA"
         }
       ];
 
-      // Small Group Dinner events (manually scheduled on non-conflicting days).
+      // Small Group Dinner events (pre-scheduled on non-conflicting nights).
       var smallGroupDinners = [
         {
           title: "Small Group Dinner - Modern Apizza",
@@ -202,8 +225,7 @@
       ];
 
       // Combine all events into one array.
-      var allEvents = [];
-      allEvents = allEvents.concat(oneTimeEvents, libraryLeapersEvents, unplugEvents, eastRockHikeEvents, smallGroupDinners);
+      var allEvents = [].concat(oneTimeEvents, libraryLeapersEvents, unplugEvents, eastRockHikeEvents, smallGroupDinners);
 
       // Initialize FullCalendar with our events.
       document.addEventListener('DOMContentLoaded', function() {
